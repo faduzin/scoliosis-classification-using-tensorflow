@@ -18,7 +18,14 @@ The dataset consists of multiple columns, each representing a different attribut
   - 🟢 **0 (No Scoliosis)** – If scoliosis degree is **≤10**  
   - 🔴 **1 (Scoliosis Present)** – If scoliosis degree is **>10**  
 
-Additionally, the dataset contains a series of biomechanical features (e.g., `s111, s112, ... s119`) that may be relevant for classification.
+### 🦶 Biomechanical Features (Baropodometer Readings)  
+The dataset contains **biomechanical features** recorded from a **baropodometer**, a device used to analyze foot pressure distribution. These features are represented by columns **s0 to s119**, where:
+
+- **s0 to s59**: Correspond to the **left foot sensors**.  
+- **s60 to s119**: Correspond to the **right foot sensors**.  
+- Each value represents the **mean pressure recorded** over the duration of the measurement.
+
+Each sample was recorded **while the patient stood on the baropodometer for 30 to 60 seconds**, first with their **eyes closed**, and then with their **eyes open**. These readings help assess postural stability and weight distribution, which may be indicative of scoliosis-related imbalances.
 
 ### 🎯 Target Variable for Classification  
 The target variable for the classification model is **Scolio_Class**, which determines if a patient is classified as having scoliosis or not. This binary classification allows the use of various machine learning models to predict scoliosis based on patient characteristics.
