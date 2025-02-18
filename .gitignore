@@ -1,2 +1,3 @@
 data/raw/scoliosis-dataset.csv
 data/processed/processed-scoliosis-dataset.csv
+src/__pycache__
