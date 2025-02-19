@@ -181,6 +181,10 @@ Apesar dessa abordagem, os modelos não conseguiram aprender de forma eficaz os 
   - **Ajuste da Função de Perda:** A função de perda foi alterada de entropia cruzada binária para focal loss, a fim de ponderar as classes, mas os resultados permaneceram inalterados.
 - A busca por hiperparâmetros com o Keras Tuner também foi aplicada; entretanto, devido à incapacidade do modelo em aprender de forma eficaz, os resultados do ajuste foram inconsistentes.
 
+<div align="center">
+  <img src="assets/confusion_matrix_first_try.png" alt="Confusion Matrix" width="70%">
+</div>
+
 ## Análise e Resultados
 
 Apesar do extenso pré-processamento e de múltiplas estratégias para lidar com o desequilíbrio e a redundância dos dados, os modelos consistentemente falharam em aprender padrões significativos. Todas as abordagens testadas — subamostragem, PCA e funções de perda alternativas — resultaram em modelos que previam apenas uma classe, sugerindo que, com a metodologia atual, não há evidências suficientes para estabelecer uma relação entre os dados do baropodômetro e a classificação da escoliose.

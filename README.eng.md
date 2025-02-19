@@ -183,6 +183,12 @@ This approach allows rapid iteration over model architectures, ensuring that the
   - **Loss Function Adjustment:** Switched from binary crossentropy to focal loss to weight classes, but the results remained unchanged.
 - **Keras Tuner:** Applied for hyperparameter search; however, due to the model's inability to learn effectively, the tuning outcomes were inconsistent.
 
+<div align="center">
+  <img src="assets/confusion_matrix_first_try.png" alt="Confusion Matrix" width="70%">
+</div>
+
+The image shows a confusion matrix, common between all experiments.
+
 ## Analysis and Results
 
 Despite extensive preprocessing and multiple strategies to handle data imbalance and redundancy, our models consistently failed to learn meaningful patterns from the dataset. Every approach—undersampling, PCA, and alternative loss functions—resulted in a model that predicted only one class. This suggests that, under the current methodology, there is insufficient evidence to establish a relationship between baropodometer sensor data and scoliosis classification.
