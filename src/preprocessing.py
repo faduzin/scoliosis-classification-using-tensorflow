@@ -19,6 +19,7 @@ def scale_data(data):
     try:    
         scaler = StandardScaler()
         data = scaler.fit_transform(data)
+        print('Data scaled successfully.')
         return data
     except Exception as e:
         print(f"Error: {e}")
@@ -40,7 +41,7 @@ def extract_individual_n(data):
 
 def stratified_group_split(X, y, groups, n_splits=5):
     try:
-        sgkf = StratifiedGroupKFold(n_splits=n_splits)
+        sgkf = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=42)
 
         for train_index, val_index in sgkf.split(X, y, groups):
             X_train, X_val = X[train_index], X[val_index]
@@ -78,3 +79,4 @@ def stratified_group_split(X, y, groups, n_splits=5):
     except Exception as e:
         print(f"Error: {e}")
         return None
+
