@@ -1,73 +1,83 @@
-# Scoliosis Classification using TensorFlow
+# Classificação de Escoliose utilizando TensorFlow
 
-This project aims to classify scoliosis severity based on patient data. Using TensorFlow, a Multilayer Perceptron (MLP) model is built to predict whether a patient has scoliosis (scoliosis degree >10) or not (scoliosis degree ≤10). The project leverages Keras Tuner for automated hyperparameter optimization, helping identify the best model topology for the task.
+*To access this README in english, [click here](README.eng.md)*
 
-## Table of Contents
+Este projeto tem como objetivo classificar a gravidade da escoliose com base nos dados dos pacientes. Utilizando o TensorFlow, foi construído um modelo de Perceptron Multicamadas (MLP) para prever se um paciente possui escoliose (grau de escoliose > 10) ou não (grau de escoliose ≤ 10). O projeto utiliza o Keras Tuner para a otimização automatizada dos hiperparâmetros, embora nossos experimentos tenham revelado que, mesmo com um ajuste extenso, os modelos não conseguiram aprender padrões significativos a partir do conjunto de dados.
 
-1. [Background](#background)
-2. [What is an MLP?](#what-is-an-mlp)
-3. [Dataset Information](#dataset-information)
-4. [TensorFlow Implementation](#tensorflow-implementation)
-5. [Keras Tuner for Hyperparameter Optimization](#keras-tuner-for-hyperparameter-optimization)
-6. [The Process](#the-process)
-7. [Analysis and Results](#analysis-and-results)
-8. [Conclusion](#conclusion)
-9. [Contact](#contact)
-10. [Repository Structure](#repository-structure)
+> **Nota:** Uma dissertação de mestrado aplicou aprendizado de máquina a este mesmo conjunto de dados e relatou uma acurácia de 75%. No entanto, essa dissertação não considerou que múltiplas amostras foram coletadas do mesmo indivíduo. Ao levar esse aspecto em consideração, nossos experimentos não produziram resultados consistentes ou significativos. Para mais detalhes, consulte o [documento da dissertação](https://repositorio.unesp.br/entities/publication/153798ea-a515-4313-8302-a8f59bf1e127).
 
-## Background
+## Sumário
 
-Scoliosis, a condition characterized by an abnormal curvature of the spine, is detected by measuring the scoliosis degree. In this project, we use patient demographic, physical, and biomechanical data (such as baropodometer readings) to classify the presence or absence of scoliosis. Our approach centers on a deep learning model—specifically an MLP—to address this binary classification task.
+1. [Contexto](#contexto)
+2. [O que é um MLP?](#o-que-é-um-mlp)
+3. [Informações sobre o Conjunto de Dados](#informações-sobre-o-conjunto-de-dados)
+4. [Implementação com TensorFlow](#implementação-com-tensorflow)
+5. [Otimização de Hiperparâmetros com Keras Tuner](#otimização-de-hiperparâmetros-com-keras-tuner)
+6. [O Processo](#o-processo)
+7. [Análise e Resultados](#análise-e-resultados)
+8. [Conclusão](#conclusão)
+9. [Contribuições](#contribuições)
+10. [Contato](#contato)
+11. [Estrutura do Repositório](#estrutura-do-repositório)
 
-## What is an MLP?
+## Contexto
 
-A **Multilayer Perceptron (MLP)** is a type of feedforward artificial neural network that consists of:
-- **Input Layer:** Receives the raw data.
-- **Hidden Layers:** One or more layers where each neuron applies a weighted sum followed by an activation function (commonly ReLU) to capture complex patterns.
-- **Output Layer:** Produces the final prediction. In binary classification, this layer typically uses a sigmoid activation function to output probabilities.
+A escoliose é caracterizada por uma curvatura anormal da coluna vertebral, com o diagnóstico geralmente baseado no grau medido de escoliose. Neste projeto, utilizamos dados demográficos, físicos e biomecânicos dos pacientes — incluindo leituras dos sensores do baropodômetro — para classificar a severidade da escoliose. Embora trabalhos anteriores (como a dissertação de mestrado vinculada) tenham apresentado acurácias promissoras, esses estudos não consideraram que várias amostras podem ser coletadas do mesmo indivíduo. Ao levar esse fator em conta, nossos modelos consistentemente apresentaram dificuldades em aprender com os dados.
 
-MLPs learn by adjusting the weights using backpropagation, minimizing a loss function (like binary crossentropy) during training. Their fully-connected architecture makes them particularly well-suited for tabular data, as is the case with our scoliosis dataset.
+## O que é um MLP?
 
-## Dataset Information
+Um **Perceptron Multicamadas (MLP)** é um tipo de rede neural feedforward composto por:
+- **Camada de Entrada:** Responsável por receber as características brutas dos dados.
+- **Camadas Ocultas:** Conjunto de neurônios que aplicam somas ponderadas seguidas de funções de ativação (geralmente ReLU) para extrair padrões complexos.
+- **Camada de Saída:** Responsável por gerar a previsão final; para tarefas de classificação binária, utiliza-se uma função de ativação sigmoide para fornecer probabilidades.
 
-The dataset comprises patient records with various attributes, including:
+Os MLPs são treinados através da retropropagação, com o objetivo de minimizar uma função de perda (como a entropia cruzada binária), sendo especialmente indicados para o processamento de dados tabulares.
 
-- **Id:** Unique patient identifier.
-- **Name:** Anonymized patient identifier.
-- **Age:** Patient age in years.
-- **Mass:** Patient body mass (kg).
-- **Height:** Patient height (m).
-- **Gender:** Represented with binary columns (Female/Male).
-- **Handedness:** Indicated with binary columns (R_Handed/L_Handed).
-- **CoP_ML:** Center of pressure measurement in the medial-lateral direction.
-- **Scolio:** The measured scoliosis degree.
-- **Scolio_Class:** Binary label derived from the scoliosis degree:
-  - **0 (No Scoliosis):** Scoliosis degree ≤10
-  - **1 (Scoliosis Present):** Scoliosis degree >10
+## Informações sobre o Conjunto de Dados
 
-Additionally, the dataset includes biomechanical features from baropodometer readings (columns `s0` to `s119`), where:
-- `s0` to `s59` correspond to left foot sensors.
-- `s60` to `s119` correspond to right foot sensors.
+O conjunto de dados é composto por registros de pacientes contendo diversas características, tais como:
 
-Each sensor value reflects the mean pressure recorded over a 30–60 second measurement period, providing insight into postural stability and weight distribution.
+- **Id:** Identificador único para cada paciente.
+- **Nome:** Identificador anônimo do paciente.
+- **Idade:** Idade do paciente (em anos).
+- **Massa:** Massa corporal do paciente (em kg).
+- **Altura:** Altura do paciente (em metros).
+- **Gênero:** Colunas binárias que indicam o gênero.
+- **Lateralidade:** Indicadores para destros ou canhotos, embora existam colunas redundantes.
+- **CoP_ML:** Medida do centro de pressão na direção medial-lateral.
+- **Scolio:** Grau medido da escoliose.
+- **Scolio_Class:** Rótulo binário derivado do grau de escoliose:
+  - **0 (Sem Escoliose):** Grau de escoliose ≤ 10
+  - **1 (Com Escoliose):** Grau de escoliose > 10
 
-## TensorFlow Implementation
+Além disso, o conjunto de dados inclui 120 características biomecânicas provenientes das leituras do baropodômetro, onde:
+- As colunas de `s0` a `s59` representam as leituras do pé esquerdo.
+- As colunas de `s60` a `s119` representam as leituras do pé direito.
 
-The MLP is implemented using TensorFlow’s Keras API. Below is a high-level overview of the implementation steps:
+Cada valor dos sensores representa a pressão média registrada durante um período de 30 a 60 segundos.
 
-1. **Data Preparation:**
-   - **Cleaning & Formatting:** Convert numerical values to the correct format and handle missing values.
-   - **Normalization:** Scale numerical features to improve training performance.
-   - **Encoding:** Transform categorical features (e.g., gender, handedness) into numerical representations.
-   - **Splitting:** Use stratified sampling to divide data into training and testing sets, preserving class balance.
+## Implementação com TensorFlow
 
-2. **Building the MLP Model:**
-   - **Input Layer:** Accepts the preprocessed features.
-   - **Hidden Layers:** Multiple dense layers with activation functions (ReLU is commonly used).
-   - **Dropout Layers:** Included to mitigate overfitting by randomly disabling a fraction of neurons during training.
-   - **Output Layer:** A single neuron with a sigmoid activation for binary classification.
+O MLP foi implementado utilizando a API Keras do TensorFlow. Os passos principais da implementação incluíram:
 
-   Example snippet:
+1. **Preparação dos Dados:**
+   - **Limpeza e Seleção de Características:**
+     - Foram importados os dados e analisadas todas as características não relacionadas aos sensores para identificar correlações elevadas (maiores que 0,8).
+     - Remoção de 12 características altamente correlacionadas, mantendo apenas a mais representativa.
+     - Eliminação de características redundantes, como colunas duplicadas de lateralidade e gênero, além do identificador único.
+   - **Análise Exploratória:**
+     - Realização de análises exploratórias básicas utilizando boxplots e histogramas.
+     - Observou-se que a distribuição etária é ampla, com picos entre 10–20 e 55–65 anos.
+     - O peso varia de 20 a 110 kg, concentrando-se principalmente entre 60 e 80 kg.
+     - A altura dos pacientes situa-se majoritariamente entre 1,6 e 1,7 metros.
+     - O conjunto de dados é predominantemente composto por amostras femininas (aproximadamente 120 de 148) e quase todos os indivíduos são destros.
+   - **Resultado:** Após a limpeza, o dataframe passou a conter 137 características.
+
+2. **Construção do Modelo:**
+   - Criação de um modelo MLP composto por uma camada de entrada, diversas camadas ocultas com funções de ativação ReLU e camadas de dropout para prevenir o overfitting.
+   - A camada de saída é composta por um único neurônio com ativação sigmoide, adequado para a classificação binária.
+
+   Exemplo de código:
    ```python
    def build_mlp(input_shape):
    try:
@@ -87,22 +97,20 @@ The MLP is implemented using TensorFlow’s Keras API. Below is a high-level ove
 
    return model
    ```
-   
-3. Training:
-- The model is trained on the prepared dataset with appropriate batch sizes and epochs.
-- Early stopping callbacks are used to halt training when the validation loss plateaus.
 
-## Keras Tuner for Hyperparameter Optimization
+3. **Treinamento:**
+   - O modelo foi treinado utilizando os dados preparados, com definição adequada de tamanho de lote e número de épocas.
+   - Foram utilizados callbacks de early stopping para interromper o treinamento caso a perda de validação não apresentasse melhora.
 
-To fine-tune the MLP’s architecture, Keras Tuner is employed. This tool automates the search for optimal hyperparameters, such as:
+## Otimização de Hiperparâmetros com Keras Tuner
 
-- **Number of Layers & Neurons:** Testing different combinations of hidden layers and neuron counts.
-- **Dropout Rates:** Experimenting with various dropout probabilities to balance between underfitting and overfitting.
-- **Learning Rate:** Adjusting the learning rate of the optimizer.
-- **Epochs:** Optimizing these parameters to improve convergence speed and generalization.
+Para refinar a arquitetura do MLP, o Keras Tuner foi empregado para automatizar a busca pelos hiperparâmetros ideais. Entre os hiperparâmetros explorados estão:
+- O número de camadas ocultas e a quantidade de neurônios em cada uma.
+- As taxas de dropout, ajustadas para equilibrar o risco de underfitting e overfitting.
+- A taxa de aprendizado do otimizador.
+- O número de épocas de treinamento.
 
-A simplified example using Keras Tuner:
-
+Exemplo de código:
 ```python
 def build_tuned_mlp(X_train, y_train, X_val, y_val, directory='tuned_models'):
    try:
@@ -141,31 +149,57 @@ def build_tuned_mlp(X_train, y_train, X_val, y_val, directory='tuned_models'):
       return None
 ```
 
-This approach allows rapid iteration over model architectures, ensuring that the final model is well-optimized for the classification task.
+Apesar dessa abordagem, os modelos não conseguiram aprender de forma eficaz os padrões presentes nos dados.
 
-## The Process
-- **Data Preparation:** Cleaning, normalization, encoding, and splitting.
-- **Model Construction:** Building a baseline MLP with TensorFlow’s Keras API.
-- **Hyperparameter Tuning:** Utilizing Keras Tuner to iterate over various architectures and parameters.
-- **Training & Evaluation:** Training the model with early stopping and evaluating performance using accuracy and other relevant metrics.
-- **Optimization:** Refining the model based on validation results to mitigate overfitting and enhance generalization.
+## O Processo
 
-## Analysis and Results
-After thorough experimentation:
+### Importação e Limpeza dos Dados
 
-- **Model Performance:** The best-performing model achieved high accuracy on the validation set.
-- **Insights:** Keras Tuner helped identify the ideal balance between model complexity and regularization. The inclusion of dropout layers was crucial in reducing overfitting.
-- **Future Work:** Further experiments could explore alternative architectures (e.g., CNNs if spatial patterns in sensor data become relevant) or advanced feature engineering techniques.
+- Foram importados os dados brutos.
+- Realizou-se a exploração das características não relacionadas aos sensores para avaliar correlações.
+- Remoção de 12 características com alta intercorrelação, mantendo-se apenas a mais representativa.
+- Eliminação de características redundantes (colunas duplicadas de lateralidade e gênero) e do identificador único.
+- Realização de análise exploratória utilizando boxplots e histogramas, que revelou:
+  - **Idade:** Distribuição ampla, com picos entre 10–20 e 55–65 anos.
+  - **Peso:** Varia de 20 a 110 kg, concentrando-se entre 60 e 80 kg.
+  - **Altura:** Principalmente entre 1,6 e 1,7 metros.
+  - **Gênero:** Predominantemente feminino (cerca de 120 de 148 amostras).
+  - **Lateralidade:** Quase todos os indivíduos são destros (com uma exceção).
+- **Resultado final:** Dataframe com 137 características.
 
-## Conclusion
-This project demonstrates the effective use of an MLP for scoliosis classification using TensorFlow. By carefully preparing the dataset and leveraging Keras Tuner for hyperparameter optimization, we achieved a robust model capable of accurately distinguishing between patients with and without scoliosis. This work not only highlights the power of deep learning in medical applications but also emphasizes the importance of model optimization in achieving reliable performance.
+### Escalonamento e Divisão dos Dados
 
-## Contact
+- Os dados foram escalonados.
+- A divisão dos dados foi realizada utilizando amostragem estratificada e agrupada, para levar em conta as múltiplas amostras de cada indivíduo.
 
-If you have any questions or feedback, feel free to reach out:  
+### Treinamento e Avaliação do Modelo
+
+- Os resultados iniciais indicaram que o modelo aprendeu apenas uma classe, classificando todas as entradas em uma única categoria.
+- Foram testadas diversas abordagens para tratar o desequilíbrio de classes:
+  - **Subamostragem:** Não apresentou melhoria.
+  - **Seleção de Características com PCA:** Resultados semelhantes foram obtidos.
+  - **Ajuste da Função de Perda:** A função de perda foi alterada de entropia cruzada binária para focal loss, a fim de ponderar as classes, mas os resultados permaneceram inalterados.
+- A busca por hiperparâmetros com o Keras Tuner também foi aplicada; entretanto, devido à incapacidade do modelo em aprender de forma eficaz, os resultados do ajuste foram inconsistentes.
+
+## Análise e Resultados
+
+Apesar do extenso pré-processamento e de múltiplas estratégias para lidar com o desequilíbrio e a redundância dos dados, os modelos consistentemente falharam em aprender padrões significativos. Todas as abordagens testadas — subamostragem, PCA e funções de perda alternativas — resultaram em modelos que previam apenas uma classe, sugerindo que, com a metodologia atual, não há evidências suficientes para estabelecer uma relação entre os dados do baropodômetro e a classificação da escoliose.
+
+## Conclusão
+
+Neste estágio, não foi possível comprovar nenhuma relação entre o uso das amostras do baropodômetro e a previsão da severidade da escoliose. Embora trabalhos anteriores (como a dissertação de mestrado mencionada) tenham reportado uma acurácia de 75%, esses estudos não levaram em consideração o fato de que múltiplas amostras foram coletadas do mesmo indivíduo. Ao considerar esse fator, nossos modelos não produziram previsões consistentes ou significativas.
+
+## Contribuições
+
+- Tayenne Euqueres
+- William de Oliveira Silva
+
+## Contato
+
+Se você tiver alguma dúvida ou comentário, sinta-se à vontade para entrar em contato:  
 [GitHub](https://github.com/faduzin) | [LinkedIn](https://www.linkedin.com/in/ericfadul/) | [eric.fadul@gmail.com](mailto:eric.fadul@gmail.com)
 
-## Repository Structure
+## Estrutura do Repositório
 
 ```
 .
