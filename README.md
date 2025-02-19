@@ -164,3 +164,17 @@ This project demonstrates the effective use of an MLP for scoliosis classificati
 
 If you have any questions or feedback, feel free to reach out:  
 [GitHub](https://github.com/faduzin) | [LinkedIn](https://www.linkedin.com/in/ericfadul/) | [eric.fadul@gmail.com](mailto:eric.fadul@gmail.com)
+
+## Repository Structure
+
+```
+.
+├── assets/           # Contains the images used in the analysis
+├── data/             # Stores the datasets required for the project
+├── notebooks/        # Includes Jupyter Notebook (.ipynb) files
+├── src/              # Package with modules and modularized functions
+├── .gitignore        # List of files and directories to be ignored by Git
+├── license           # Project's license file
+├── readme.eng.md     # English version of the README
+└── readme.md         # Main README (in Portuguese), 
+```
