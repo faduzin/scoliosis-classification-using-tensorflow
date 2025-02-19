@@ -7,26 +7,41 @@ import keras_tuner as kt
 from sklearn.model_selection import StratifiedGroupKFold
 from sklearn.utils import resample
 from collections import Counter
+import tensorflow.keras.backend as K
 
 
 def build_mlp(input_shape):
     try:
         model = Sequential()
-        model.add(Dense(128, activation="relu", input_shape=input_shape))
+        model.add(Input(shape=(input_shape,)))
+        model.add(Dense(128, activation="relu"))
         model.add(Dense(64, activation="relu"))
         model.add(Dense(32, activation="relu"))
         model.add(Dense(1, activation="sigmoid"))
+        
+        def focal_loss(gamma=2.0, alpha=0.25):
+            def focal_loss_fixed(y_true, y_pred):
+                bce = tf.keras.losses.binary_crossentropy(y_true, y_pred)
+                bce_exp = K.exp(-bce)
+                focal = alpha * K.pow((1 - bce_exp), gamma) * bce
+                return focal
+            return focal_loss_fixed
 
-        model.compile(optimizer='adam',
-                    loss='binary_crossentropy',
-                    metrics=['accuracy'])
+        model.compile(optimizer=keras.optimizers.Adam(0.00001),
+                    loss=focal_loss(gamma=2.0, alpha=0.25),
+                    metrics=[
+                        tf.keras.metrics.BinaryAccuracy(name='accuracy'),
+                        tf.keras.metrics.Precision(name='precision'),
+                        tf.keras.metrics.Recall(name='recall'),
+                        tf.keras.metrics.AUC(name='auc')
+                        ]
+                    )
         
         model.summary()
     except Exception as e:
         print("Error building model: ", e)
 
     return model
-
 
 def build_tuned_mlp(X_train, y_train, X_val, y_val, directory='tuned_models'):
     try:
