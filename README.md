@@ -185,6 +185,8 @@ Apesar dessa abordagem, os modelos não conseguiram aprender de forma eficaz os 
   <img src="assets/confusion_matrix_first_try.png" alt="Confusion Matrix" width="70%">
 </div>
 
+A imagem mostra uma matriz de confusão comum entre todos os treinos.
+
 ## Análise e Resultados
 
 Apesar do extenso pré-processamento e de múltiplas estratégias para lidar com o desequilíbrio e a redundância dos dados, os modelos consistentemente falharam em aprender padrões significativos. Todas as abordagens testadas — subamostragem, PCA e funções de perda alternativas — resultaram em modelos que previam apenas uma classe, sugerindo que, com a metodologia atual, não há evidências suficientes para estabelecer uma relação entre os dados do baropodômetro e a classificação da escoliose.
